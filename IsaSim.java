@@ -32,7 +32,7 @@ public class IsaSim {
             int rd = (instr >> 7) & 0x01f;
             int rs1 = (instr >> 15) & 0x01f;
             int imm = (instr >> 20);
-            int funct3 = (instr >> 12) & 0x7f;
+            int funct3 = (instr >> 12) & 0x7;
             int rs2 = (instr >> 20) & 0x01f;
             int funct7 = (instr >> 25);
 
@@ -60,12 +60,13 @@ public class IsaSim {
                             System.out.println("Funct3 " + funct3 + " not yet implemented");
                             break;
                     }
-
+                break;
                 
                 default:
                     System.out.println("Opcode " + opcode + " not yet implemented");
                     break;
             }
+    
 
             pc += 4; // One instruction is four bytes
             if ((pc >> 2) >= progr.length) {
