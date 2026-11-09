@@ -38,6 +38,10 @@ public class IsaSim {
                 case 0x13:
                     reg[rd] = reg[rs1] + imm;
                     break;
+                case 0x14:
+                    reg[rd] = reg[rs1] - imm;
+                    break;
+                
                 default:
                     System.out.println("Opcode " + opcode + " not yet implemented");
                     break;
