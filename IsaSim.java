@@ -79,6 +79,10 @@ public class IsaSim {
         }
 
         System.out.println("Program exit");
+        for (int i = 0; i < reg.length; ++i) {
+            System.out.print(reg[i] + " ");
+        }
+        System.out.println();
 
     }
 
