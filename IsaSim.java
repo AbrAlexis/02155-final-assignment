@@ -56,7 +56,10 @@ public class IsaSim {
                                     break;
                             }
                             break;
-
+                        default:
+                            System.out.println("Funct3 " + funct3 + " not yet implemented");
+                            break;
+                    }
 
                 
                 default:
