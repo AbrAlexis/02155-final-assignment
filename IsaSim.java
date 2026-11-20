@@ -70,16 +70,24 @@ public class IsaSim {
                         case 0x4: // xori(exclusive or immediate)
                             reg[rd] = reg[rs1] ^ imm;
                             break;
-                        case 0x5: // srli(shift right logical immediate)
-                            reg[rd] = reg[rs1] >>> imm;
+                        case 0x5:
+                            funct7 = instr >>> 25;
+                            switch (funct7) {
+                                case 0x00: // srli(shift right logical immediate)
+                                    reg[rd] = reg[rs1] >>> imm;
+                                    break;
+                                case 0x20: // srai(shift right arithmetic immediate)
+                                    reg[rd] = reg[rs1] >> imm;
+                                    break;
+                                default:
+                                    System.out.println("Funct7 " + funct7 + " not yet implemented");
+                                    break;
+                            }
                             break;
-                        case 0x6: // srai(shift right arithmetic immediate)
-                            reg[rd] = reg[rs1] >> imm;
-                            break;
-                        case 0x7: // ori (or immediate)
+                        case 0x6: // ori (or immediate)
                             reg[rd] = reg[rs1] | imm;
                             break;
-                        case 0x8: // andi (and immediate)
+                        case 0x7: // andi (and immediate)
                             reg[rd] = reg[rs1] & imm;
                             break;
                         default:
@@ -139,24 +147,37 @@ public class IsaSim {
                     imm = ((instr >> 31) << 12) | ((instr << 4) & 0x800) | ((instr >> 20) & 0x7E0) | ((instr >> 7) & 0x1E);
                     funct3 = (instr >> 12) & 0x7;
                     switch (funct3) {
-                        case 0x0: // beq
-                            System.out.println("Branch equal not yet implemented");
-                            break;
-                        case 0x1: // bne
-                            System.out.println("Branch not equal not yet implemented");
-                            break;
-                        case 0x4: // blt
-                            System.out.println("Branch less than not yet implemented");
-                            break;
-                        case 0x5: // bge
-                            System.out.println("Branch greater or equal not yet implemented");
-                            break;
-                        case 0x6: // bltu
-                            System.out.println("Branch less than unsigned not yet implemented");
-                            break;
-                        case 0x7: // bgeu
-                            System.out.println("Branch greater or equal unsigned not yet implemented");
-                            break;
+                        case 0x0: // beq(branch if equal)
+                            if (reg[rs1] == reg[rs2]) {
+                                pc += imm - 4;
+                            }
+                                break;
+                        case 0x1: // bne(branch if not equal)
+                            if (reg[rs1] != reg[rs2]) {
+                                pc += imm - 4;
+                            }
+                                break;
+                        case 0x4: // blt(branch if less than)
+                            if (reg[rs1] < reg[rs2]) {
+                                pc += imm - 4;
+                            }
+                                break;
+                        case 0x5: // bge(branch if greater or equal)
+                            if (reg[rs1] >= reg[rs2]) {
+                                pc += imm - 4;
+                            }
+                                break;
+                        case 0x6: // bltu(branch if less than unsigned)
+                            if (Integer.compareUnsigned(reg[rs1], reg[rs2]) < 0) {
+                                pc += imm - 4;
+                            }
+                                break;
+                        case 0x7: // bgeu(branch if greater or equal unsigned)
+                            if (Integer.compareUnsigned(reg[rs1], reg[rs2]) >= 0) {
+                                pc += imm - 4;
+                            }
+                                break;
+
                         default:
                             System.out.println("Funct3 " + funct3 + " not yet implemented");
                             break;
@@ -230,16 +251,23 @@ public class IsaSim {
                         case 0x4: // xor(exclusive or) instruction
                             reg[rd] = reg[rs1] ^ reg[rs2];
                             break;
-                        case 0x5: // srl(shift right logical) instruction
-                            reg[rd] = reg[rs1] >>> reg[rs2];
+                        case 0x5:
+                            switch (funct7) {
+                                case 0x00: // srl(shift right logical) instruction
+                                    reg[rd] = reg[rs1] >>> reg[rs2];
+                                    break;
+                                case 0x20: // sra(shift right arithmetic) instruction
+                                    reg[rd] = reg[rs1] >> reg[rs2];
+                                    break;
+                                default:
+                                    System.out.println("Funct7 " + funct7 + " not yet implemented");
+                                    break;
+                            }
                             break;
-                        case 0x6: // sra(shift right arithmetic) instruction
-                            reg[rd] = reg[rs1] >> reg[rs2];
-                            break;
-                        case 0x7: // or(inclusive or) instruction
+                        case 0x6: // or(inclusive or) instruction
                             reg[rd] = reg[rs1] | reg[rs2];
                             break;
-                        case 0x8: // and(logical and) instruction
+                        case 0x7: // and(logical and) instruction
                             reg[rd] = reg[rs1] & reg[rs2];
                             break;
 
