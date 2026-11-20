@@ -47,8 +47,40 @@ public class IsaSim {
                     funct3 = (instr >> 12) & 0x7;
                     
                     switch (funct3) {
-                        case 0x0: // addi
+                        case 0x0: // addi(add immediate)
                             reg[rd] = reg[rs1] + imm;
+                            break;
+                        case 0x1: // slli(shift left logical immediate)
+                            reg[rd] = reg[rs1] << imm;
+                            break;
+                        case 0x2: // slti(set less than immediate)
+                            if (reg[rs1] < imm) {
+                                reg[rd] = 1;
+                            } else {
+                                reg[rd] = 0;
+                            }
+                            break;
+                        case 0x3: // sltiu(set less than immediate unsigned)
+                            if (Integer.compareUnsigned(reg[rs1], imm) < 0) {
+                                reg[rd] = 1;
+                            } else {
+                                reg[rd] = 0;
+                            }
+                            break;
+                        case 0x4: // xori(exclusive or immediate)
+                            reg[rd] = reg[rs1] ^ imm;
+                            break;
+                        case 0x5: // srli(shift right logical immediate)
+                            reg[rd] = reg[rs1] >>> imm;
+                            break;
+                        case 0x6: // srai(shift right arithmetic immediate)
+                            reg[rd] = reg[rs1] >> imm;
+                            break;
+                        case 0x7: // ori (or immediate)
+                            reg[rd] = reg[rs1] | imm;
+                            break;
+                        case 0x8: // andi (and immediate)
+                            reg[rd] = reg[rs1] & imm;
                             break;
                         default:
                             System.out.println("Funct3 " + funct3 + " not yet implemented");
@@ -136,23 +168,24 @@ public class IsaSim {
                     System.out.println("Jump and link not yet implemented");
                     break;
 
-                case 0b1100111: // I-type jalr
+                case 0b1100111: // I-type jalr(jump and link register) instruction
                     rd = (instr >> 7) & 0x01f;
                     rs1 = (instr >> 15) & 0x01f;
                     imm = (instr >> 20);
                     funct3 = (instr >> 12) & 0x7;
-                    System.out.println("Jump and link register not yet implemented");
+                       reg[rd] = pc + 4; // store return address in rd
+                       pc = (reg[rs1] + imm) & ~1; // update program counter to target address
                     break;
 
-                case 0b0110111: // U-type lui
+                case 0b0110111: // U-type lui(load upper immediate) instruction
                     rd = (instr >> 7) & 0x01f;
                     imm = (instr >> 12);
                     reg[rd] = imm << 12;
                     break;
-                case 0b0010111: // U-type auipc
+                case 0b0010111: // U-type auipc(add upper immediate to pc)
                     rd = (instr >> 7) & 0x01f;
                     imm = (instr >> 12);
-                    reg[rd] = (imm << 12) + pc;
+                    reg[rd] = (imm << 12) + pc; 
                     break;
 
                 case 0b0110011: // R-type
