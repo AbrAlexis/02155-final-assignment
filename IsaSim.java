@@ -9,7 +9,7 @@
 public class IsaSim {
 
     static int pc;
-    static int reg[] = new int[4];
+    static int reg[] = new int[32];
 
     // Here the first program hard coded as an array
     static int progr[] = {
@@ -29,19 +29,140 @@ public class IsaSim {
 
             int instr = progr[pc >> 2];
             int opcode = instr & 0x7f;
-            int rd = (instr >> 7) & 0x01f;
-            int rs1 = (instr >> 15) & 0x01f;
-            int imm = (instr >> 20);
-            int funct3 = (instr >> 12) & 0x7;
-            int rs2 = (instr >> 20) & 0x01f;
-            int funct7 = (instr >> 25);
+            int rd;
+            int rs1;
+            int imm;
+            int funct3;
+            int rs2;
+            int funct7;
 
             switch (opcode) {
+                // 
 
-                case 0x13:
-                    reg[rd] = reg[rs1] + imm;
+                case 0b0010011: // I-type arithmetic
+
+                    rd = (instr >> 7) & 0x01f;
+                    rs1 = (instr >> 15) & 0x01f;
+                    imm = (instr >> 20);
+                    funct3 = (instr >> 12) & 0x7;
+                    
+                    switch (funct3) {
+                        case 0x0: // addi
+                            reg[rd] = reg[rs1] + imm;
+                            break;
+                        default:
+                            System.out.println("Funct3 " + funct3 + " not yet implemented");
+                            break;
+                    }
                     break;
-                case 0x33:
+                case 0b0000011: // I-type load
+                    rd = (instr >> 7) & 0x01f;
+                    rs1 = (instr >> 15) & 0x01f;
+                    imm = (instr >> 20);
+                    funct3 = (instr >> 12) & 0x7;
+                    switch (funct3) {
+                        case 0x0: // lb
+                            System.out.println("Load byte not yet implemented");
+                            break;
+                        case 0x1: // lh
+                            System.out.println("Load halfword not yet implemented");
+                            break;
+                        case 0x2: // lw
+                            System.out.println("Load word not yet implemented");
+                            break;
+                        case 0x4: // lbu
+                            System.out.println("Load byte unsigned not yet implemented");
+                            break;
+                        case 0x5: // lhu
+                            System.out.println("Load halfword unsigned not yet implemented");
+                            break;
+                        default:
+                            System.out.println("Funct3 " + funct3 + " not yet implemented");
+                            break;
+                    }
+                    break;
+                case 0b0100011: // S-type
+                    rs1 = (instr >> 15) & 0x01f;
+                    rs2 = (instr >> 20) & 0x01f;
+                    imm = ((instr >> 7) & 0x01f) | ((instr >> 25) << 5);
+                    funct3 = (instr >> 12) & 0x7;
+                    switch (funct3) {
+                        case 0x0: // sb
+                            System.out.println("Store byte not yet implemented");
+                            break;
+                        case 0x1: // sh
+                            System.out.println("Store halfword not yet implemented");
+                            break;
+                        case 0x2: // sw
+                            System.out.println("Store word not yet implemented");
+                            break;
+                        default:
+                            System.out.println("Funct3 " + funct3 + " not yet implemented");
+                            break;
+                    }
+                    break;
+                case 0b1100011: // B-type branch
+                    rs1 = (instr >> 15) & 0x01f;
+                    rs2 = (instr >> 20) & 0x01f;
+                    imm = ((instr >> 31) << 12) | ((instr << 4) & 0x800) | ((instr >> 20) & 0x7E0) | ((instr >> 7) & 0x1E);
+                    funct3 = (instr >> 12) & 0x7;
+                    switch (funct3) {
+                        case 0x0: // beq
+                            System.out.println("Branch equal not yet implemented");
+                            break;
+                        case 0x1: // bne
+                            System.out.println("Branch not equal not yet implemented");
+                            break;
+                        case 0x4: // blt
+                            System.out.println("Branch less than not yet implemented");
+                            break;
+                        case 0x5: // bge
+                            System.out.println("Branch greater or equal not yet implemented");
+                            break;
+                        case 0x6: // bltu
+                            System.out.println("Branch less than unsigned not yet implemented");
+                            break;
+                        case 0x7: // bgeu
+                            System.out.println("Branch greater or equal unsigned not yet implemented");
+                            break;
+                        default:
+                            System.out.println("Funct3 " + funct3 + " not yet implemented");
+                            break;
+                    }
+                    break;
+                case 0b1101111: // J-type
+                    rd = (instr >> 7) & 0x01f;
+                    imm = ((instr >> 31) << 20) | (instr & 0x000FF000) | ((instr >> 9)  & 0x00000800) | ((instr >> 20) & 0x000007FE);
+                    System.out.println("Jump and link not yet implemented");
+                    break;
+
+                case 0b1100111: // I-type jalr
+                    rd = (instr >> 7) & 0x01f;
+                    rs1 = (instr >> 15) & 0x01f;
+                    imm = (instr >> 20);
+                    funct3 = (instr >> 12) & 0x7;
+                    System.out.println("Jump and link register not yet implemented");
+                    break;
+
+                case 0b0110111: // U-type lui
+                    rd = (instr >> 7) & 0x01f;
+                    imm = (instr >> 12);
+                    reg[rd] = imm << 12;
+                    break;
+                case 0b0010111: // U-type auipc
+                    rd = (instr >> 7) & 0x01f;
+                    imm = (instr >> 12);
+                    reg[rd] = (imm << 12) + pc;
+                    break;
+
+                case 0b0110011: // R-type
+
+                 rd = (instr >> 7) & 0x01f;
+                 rs1 = (instr >> 15) & 0x01f;
+                 funct3 = (instr >> 12) & 0x7;
+                 rs2 = (instr >> 20) & 0x01f;
+                 funct7 = (instr >> 25);
+
                     switch (funct3) {
                         case 0x0:
                             switch (funct7) {
@@ -60,6 +181,9 @@ public class IsaSim {
                             System.out.println("Funct3 " + funct3 + " not yet implemented");
                             break;
                     }
+ 
+
+
                 break;
                 
                 default:
