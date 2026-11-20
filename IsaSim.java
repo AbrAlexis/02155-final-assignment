@@ -178,22 +178,38 @@ public class IsaSim {
                             }
                             break;
                         case 0x1:
-                            reg[rd] = reg[rs1] << reg[rs2]; // sll instruction
+                            reg[rd] = reg[rs1] << reg[rs2]; // sll(shift left logical) instruction
                             break;
-                        case 0x2: // slt instruction
+                        case 0x2: // slt(set less than) instruction
                             if (reg[rs1] < reg[rs2]) {
                                 reg[rd] = 1;
                             } else {
                                 reg[rd] = 0;
                             }
                             break;
-                        case 0x3: // sltu instruction
+                        case 0x3: // sltu(set less than unsigned) instruction
                             if (Integer.compareUnsigned(reg[rs1], reg[rs2]) < 0) {
                                 reg[rd] = 1;
                             } else {
                                 reg[rd] = 0;
                             }
                             break;
+                        case 0x4: // xor(exclusive or) instruction
+                            reg[rd] = reg[rs1] ^ reg[rs2];
+                            break;
+                        case 0x5: // srl(shift right logical) instruction
+                            reg[rd] = reg[rs1] >>> reg[rs2];
+                            break;
+                        case 0x6: // sra(shift right arithmetic) instruction
+                            reg[rd] = reg[rs1] >> reg[rs2];
+                            break;
+                        case 0x7: // or(inclusive or) instruction
+                            reg[rd] = reg[rs1] | reg[rs2];
+                            break;
+                        case 0x8: // and(logical and) instruction
+                            reg[rd] = reg[rs1] & reg[rs2];
+                            break;
+
                         default:
                             System.out.println("Funct3 " + funct3 + " not yet implemented");
                             break;
