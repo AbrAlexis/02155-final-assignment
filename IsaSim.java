@@ -39,28 +39,33 @@ public class IsaSim {
             switch (opcode) {
 
                 case 0x13:
-                    reg[rd] = reg[rs1] + imm;
+                    reg[rd] = reg[rs1] + imm; // addi instruction
                     break;
                 case 0x33:
                     switch (funct3) {
                         case 0x0:
                             switch (funct7) {
                                 case 0x00:
-                                    reg[rd] = reg[rs1] + reg[rs2];
+                                    reg[rd] = reg[rs1] + reg[rs2]; // add instruction
                                     break;
                                 case 0x20:
-                                    reg[rd] = reg[rs1] - reg[rs2];
+                                    reg[rd] = reg[rs1] - reg[rs2]; // sub instruction
                                     break;
                                 default:
                                     System.out.println("Funct7 " + funct7 + " not yet implemented");
                                     break;
                             }
                             break;
+                        case 0x1:
+                            reg[rd] = reg[rs1] << reg[rs2]; // sll instruction
+                            break;
+                        
                         default:
                             System.out.println("Funct3 " + funct3 + " not yet implemented");
                             break;
                     }
                 break;
+                case
                 
                 default:
                     System.out.println("Opcode " + opcode + " not yet implemented");
