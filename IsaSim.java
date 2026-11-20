@@ -10,6 +10,7 @@ public class IsaSim {
 
     static int pc;
     static int reg[] = new int[32];
+    static byte[] memory = new byte[1024 * 1024]; // 1 MB of memory
 
     // Here the first program hard coded as an array
     static int progr[] = {
@@ -35,6 +36,7 @@ public class IsaSim {
             int funct3;
             int rs2;
             int funct7;
+
 
             switch (opcode) {
                 // 
@@ -101,19 +103,19 @@ public class IsaSim {
                     imm = (instr >> 20);
                     funct3 = (instr >> 12) & 0x7;
                     switch (funct3) {
-                        case 0x0: // lb
+                        case 0x0: // lb(load byte)
                             System.out.println("Load byte not yet implemented");
                             break;
-                        case 0x1: // lh
+                        case 0x1: // lh(load halfword)
                             System.out.println("Load halfword not yet implemented");
                             break;
-                        case 0x2: // lw
+                        case 0x2: // lw(load word)
                             System.out.println("Load word not yet implemented");
                             break;
-                        case 0x4: // lbu
+                        case 0x4: // lbu(load byte unsigned)
                             System.out.println("Load byte unsigned not yet implemented");
                             break;
-                        case 0x5: // lhu
+                        case 0x5: // lhu(load halfword unsigned)
                             System.out.println("Load halfword unsigned not yet implemented");
                             break;
                         default:
@@ -127,13 +129,13 @@ public class IsaSim {
                     imm = ((instr >> 7) & 0x01f) | ((instr >> 25) << 5);
                     funct3 = (instr >> 12) & 0x7;
                     switch (funct3) {
-                        case 0x0: // sb
+                        case 0x0: // sb(store byte)
                             System.out.println("Store byte not yet implemented");
                             break;
-                        case 0x1: // sh
+                        case 0x1: // sh(store halfword)
                             System.out.println("Store halfword not yet implemented");
                             break;
-                        case 0x2: // sw
+                        case 0x2: // sw(store word)
                             System.out.println("Store word not yet implemented");
                             break;
                         default:
@@ -184,8 +186,6 @@ public class IsaSim {
                     }
                     break;
                 case 0b1101111: // J-type
-                    rd = (instr >> 7) & 0x01f;
-                    imm = ((instr >> 31) << 20) | (instr & 0x000FF000) | ((instr >> 9)  & 0x00000800) | ((instr >> 20) & 0x000007FE);
                     System.out.println("Jump and link not yet implemented");
                     break;
 
@@ -195,7 +195,7 @@ public class IsaSim {
                     imm = (instr >> 20);
                     funct3 = (instr >> 12) & 0x7;
                        reg[rd] = pc + 4; // store return address in rd
-                       pc = (reg[rs1] + imm) & ~1; // update program counter to target address
+                       pc = (reg[rs1] + imm - 4) & ~1; // update program counter to target address.The ~1 is a RISK-V rule to keep the least significant bit zero so the pc is even and aligned.
                     break;
 
                 case 0b0110111: // U-type lui(load upper immediate) instruction
