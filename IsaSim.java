@@ -65,7 +65,6 @@ public class IsaSim {
                             break;
                     }
                 break;
-                case
                 
                 default:
                     System.out.println("Opcode " + opcode + " not yet implemented");
